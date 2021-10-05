@@ -1,0 +1,36 @@
+import java.net.*;
+import java.io.*;
+import javax.json.*;
+
+public class WeatherApp {
+
+	public static void main(String[] args) {
+		try {
+			URL url = new URL("http://api.openweathermap.org/data/2.5/weather?q=montreal&units=metric&appid=122a9b7457682449757326422f77a195");
+			
+			try (InputStream is = url.openStream();
+				    JsonReader rdr = Json.createReader(is)) {
+				    JsonObject obj = rdr.readObject();
+				    System.out.println("Current weather in: " + obj.getString("name"));
+
+				    JsonArray results = obj.getJsonArray("weather");
+				    JsonObject weather = results.getValuesAs(JsonObject.class).get(0);
+				    System.out.println("Main: " + weather.getString("main"));
+			        System.out.println("Description: " + weather.getString("description"));
+			        System.out.println("Icon: " + weather.getString("icon"));
+			        
+				    System.out.println("Temperature: " + obj.getJsonObject("main").get("temp"));
+				    System.out.println("Min temp: " + obj.getJsonObject("main").get("temp_min"));
+				    System.out.println("Max temp: " + obj.getJsonObject("main").get("temp_max"));
+				    System.out.println("Pressure: " + obj.getJsonObject("main").get("pressure"));
+				    System.out.println("Humidity: " + obj.getJsonObject("main").get("humidity"));
+				    
+				    System.out.println("Wind speed: " + obj.getJsonObject("wind").get("speed"));
+				    System.out.println("Wind direction: " + obj.getJsonObject("wind").get("deg"));
+				    System.out.println("Wind gust: " + obj.getJsonObject("wind").get("gust"));
+				 }
+		} catch (Exception e) {
+			System.out.println(e.getMessage());
+		}		
+	}
+}
